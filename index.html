@@ -890,7 +890,14 @@
         
         try {
             const confRef = getDocRef('settings', 'app_config');
-            const confSnap = await getDoc(confRef);
+            const prodColRef = getCol('products');
+
+            // OPTIMASI PERFORMA: Ambil data Pengaturan dan Produk secara BERSAMAAN (Parallel)
+            const [confSnap, prodSnap] = await Promise.all([
+                getDoc(confRef),
+                getDocs(prodColRef)
+            ]);
+
             let d = {};
             if (confSnap.exists()) {
                  d = confSnap.data();
@@ -902,7 +909,8 @@
                     qrisString: "00020101021126670016COM.NOBUBANK.WWW01189360050300000879140214ID2023306742510303UMI51440014ID.CO.QRIS.WWW0215ID20233067425100303UMI5204541153033605802ID5913Toko Fast Pay6006Jakarta61051234563045E16", 
                     dummyInjected: false 
                 };
-                await setDoc(confRef, d);
+                // Jalankan update default secara asynchronous agar tidak memblokir UI
+                setDoc(confRef, d);
             }
             
             state.waNumber = d.waNumber || ''; state.categories = ["Semua", ...(d.categories || [])]; 
@@ -910,15 +918,20 @@
             state.customVoucherCode = d.customVoucherCode || ''; state.customVoucherAmount = d.customVoucherAmount || 0;
             state.customVoucherUsedBy = d.customVoucherUsedBy || [];
 
-            const prodSnap = await getDocs(getCol('products'));
             let pData = []; prodSnap.forEach(doc => pData.push({ id: doc.id, ...doc.data() }));
             
             if(pData.length === 0 && !d.dummyInjected) {
                 const d1 = { name: "Paket Nasi Box Hemat", category: "Kue", originalPrice: 15000, price: 20000, desc: "Cocok untuk pengajian. Harga ekonomis isi lengkap.", img: "https://placehold.co/400x400/e2e8f0/475569?text=Nasi+Box", status: "Aktif", variants: [], createdAt: Date.now() };
                 const d2 = { name: "Beras Premium", category: "Sembako", originalPrice: 65000, price: 72000, desc: "Beras putih pulen tanpa pemutih.", img: "https://placehold.co/400x400/e2e8f0/475569?text=Beras", status: "Aktif", variants: [{name: "5 Kg", price: 72000, originalPrice: 65000}, {name: "10 Kg", price: 140000, originalPrice: 125000}], createdAt: Date.now() };
-                await setDoc(getDocRef('products', 'PRD-1'), d1); await setDoc(getDocRef('products', 'PRD-2'), d2);
+                
+                // Gunakan Promise.all untuk setup dummy agar lebih cepat dan tidak memblokir
+                await Promise.all([
+                    setDoc(getDocRef('products', 'PRD-1'), d1),
+                    setDoc(getDocRef('products', 'PRD-2'), d2),
+                    setDoc(confRef, { dummyInjected: true }, {merge: true})
+                ]);
+                
                 pData = [{id: 'PRD-1', ...d1}, {id: 'PRD-2', ...d2}];
-                await setDoc(confRef, { dummyInjected: true }, {merge: true});
             }
             
             pData.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0)); state.products = pData;
@@ -942,7 +955,10 @@
                 if (addCategoryEl) {
                     addCategoryEl.innerHTML = (cOpt.length?cOpt:["Umum"]).map(c=>`<option value="${c}">${c}</option>`).join('');
                 }
-                this.renderAdminProducts(); this.renderAdminSliders(); this.fetchAdminOrders();
+                
+                this.renderAdminProducts(); this.renderAdminSliders(); 
+                // Fetch orders dieksekusi di background (tidak pakai await) agar tidak membuat loading produk terhambat
+                this.fetchAdminOrders();
             }
         } catch(e) { 
             console.error("DB Error:", e); 
