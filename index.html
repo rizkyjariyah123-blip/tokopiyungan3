@@ -733,14 +733,8 @@
     // Initialize Immersive Firebase Context
     const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
         // Fallback dummy config to prevent crashing if viewed locally
-        apiKey: "AIzaSyDWFtj_Ud9c3XSZo2OWPyGwqskFJVV3pxs",
-  authDomain: "jaya-mulya-toko.firebaseapp.com",
-  projectId: "jaya-mulya-toko",
-  storageBucket: "jaya-mulya-toko.firebasestorage.app",
-  messagingSenderId: "632283493920",
-  appId: "1:632283493920:web:9eeabc5095b874d116ae45",
-  measurementId: "G-2479M8TQJD"
-};
+        apiKey: "AIzaSy_dummy", authDomain: "dummy.firebaseapp.com", projectId: "dummy"
+    };
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'toko-piyungan';
     const fbApp = initializeApp(firebaseConfig);
     const auth = getAuth(fbApp);
@@ -808,6 +802,27 @@
     window.ui = ui;
 
     const app = {
+      syncAuthUI() {
+          const isLoggedIn = state.customerData || state.isAdmin;
+          if (isLoggedIn) {
+              document.getElementById('checkout-auth-warning').classList.add('hidden');
+              document.getElementById('checkout-fields').classList.remove('hidden');
+              document.getElementById('btn-cust-login').classList.add('hidden');
+              document.getElementById('cust-profile-badge').classList.remove('hidden');
+              document.getElementById('cust-profile-badge').classList.add('flex');
+              document.getElementById('auth-section').classList.add('hidden');
+              document.getElementById('dashboard-section').classList.remove('hidden');
+          } else {
+              document.getElementById('checkout-auth-warning').classList.remove('hidden');
+              document.getElementById('checkout-fields').classList.add('hidden');
+              document.getElementById('btn-cust-login').classList.remove('hidden');
+              document.getElementById('cust-profile-badge').classList.add('hidden');
+              document.getElementById('cust-profile-badge').classList.remove('flex');
+              document.getElementById('auth-section').classList.remove('hidden');
+              document.getElementById('dashboard-section').classList.add('hidden');
+          }
+      },
+
       async init() {
         // Enforcing Rule 3: Auth First
         const initAuth = async () => {
@@ -821,7 +836,15 @@
         this.initFakeBot();
         
         onAuthStateChanged(auth, async (user) => {
-            state.user = user;
+            if (user) state.user = user;
+            
+            // Cegah reset UI jika user masih aktif login di memori
+            if (state.customerData || state.isAdmin) {
+                this.syncAuthUI();
+                if(!this.isLoaded) { this.isLoaded = true; this.loadData(); }
+                return;
+            }
+
             if (user && !user.isAnonymous) {
                 try {
                     // Check if Admin
@@ -836,34 +859,16 @@
                             state.isAdmin = false;
                             this.setupCustomerUI(user);
                         } else {
-                            // Fallback to anonymous UI behavior if no explicit profile but logged in via Canvas
-                            state.customerData = { name: user.email?.split('@')[0] || 'User', phone: '', address: '' };
+                            state.customerData = { name: user.email?.split('@')[0] || 'User', email: user.email, phone: '', address: '' };
                             state.isAdmin = false;
                             this.setupCustomerUI(user);
                         }
                     }
-
-                    document.getElementById('dash-email').textContent = user.email || "Sesi Tamu";
-                    document.getElementById('btn-cust-login').classList.add('hidden');
-                    document.getElementById('cust-profile-badge').classList.remove('hidden');
-                    document.getElementById('cust-profile-badge').classList.add('flex');
-                    document.getElementById('auth-section').classList.add('hidden');
-                    document.getElementById('dashboard-section').classList.remove('hidden');
-                    document.getElementById('checkout-auth-warning').classList.add('hidden');
-                    document.getElementById('checkout-fields').classList.remove('hidden');
-
                     if(!state.isAdmin) this.fetchMyOrders();
-
                 } catch(e) { console.error("Auth routing error", e); }
             } else {
                 state.isAdmin = false; state.customerData = null; state.completedOrdersCount = 0;
-                document.getElementById('btn-cust-login').classList.remove('hidden');
-                document.getElementById('cust-profile-badge').classList.add('hidden');
-                document.getElementById('cust-profile-badge').classList.remove('flex');
-                document.getElementById('auth-section').classList.remove('hidden');
-                document.getElementById('dashboard-section').classList.add('hidden');
-                document.getElementById('checkout-auth-warning').classList.remove('hidden');
-                document.getElementById('checkout-fields').classList.add('hidden');
+                this.syncAuthUI();
             }
             if(!this.isLoaded) { this.isLoaded = true; this.loadData(); }
         });
@@ -873,6 +878,7 @@
           document.getElementById('admin-entry-area').classList.add('hidden');
           document.getElementById('customer-orders-area').classList.remove('hidden');
           document.getElementById('dash-name').textContent = state.customerData.name;
+          document.getElementById('dash-email').textContent = state.customerData.email || user?.email || '';
           document.getElementById('dash-phone-val').textContent = state.customerData.phone;
           document.getElementById('dash-phone').classList.remove('hidden');
           
@@ -880,8 +886,7 @@
           if(document.getElementById('buyer-address')) document.getElementById('buyer-address').value = state.customerData.address;
           document.getElementById('cust-profile-name').textContent = state.customerData.name;
           
-          document.getElementById('checkout-auth-warning').classList.add('hidden');
-          document.getElementById('checkout-fields').classList.remove('hidden');
+          this.syncAuthUI();
       },
 
       setupAdminUI(user) {
@@ -892,8 +897,7 @@
           document.getElementById('dash-phone').classList.add('hidden');
           document.getElementById('cust-profile-name').textContent = "Admin";
           
-          document.getElementById('checkout-auth-warning').classList.add('hidden');
-          document.getElementById('checkout-fields').classList.remove('hidden');
+          this.syncAuthUI();
       },
 
       async loadData() {
@@ -1067,14 +1071,6 @@
               state.user = { uid: currentUid, email: e, isAnonymous: false };
               this.setupCustomerUI(state.user);
               
-              document.getElementById('auth-section').classList.add('hidden');
-              document.getElementById('dashboard-section').classList.remove('hidden');
-              document.getElementById('dash-email').textContent = e;
-              document.getElementById('cust-profile-name').textContent = n;
-              document.getElementById('btn-cust-login').classList.add('hidden');
-              document.getElementById('cust-profile-badge').classList.remove('hidden');
-              document.getElementById('cust-profile-badge').classList.add('flex');
-              
               ui.showToast("Daftar Berhasil!");
           } catch(err) { ui.showToast(err.message, "error"); } finally { ui.setBtnLoading('btn-do-reg', false, "Daftar Akun"); }
       },
@@ -1092,9 +1088,6 @@
                   ui.showToast("Login Admin Berhasil!"); 
                   this.navigate('admin'); 
                   document.getElementById('profile-modal').classList.add('hidden'); 
-                  document.getElementById('btn-cust-login').classList.add('hidden');
-                  document.getElementById('cust-profile-badge').classList.remove('hidden');
-                  document.getElementById('cust-profile-badge').classList.add('flex');
                   return ui.setBtnLoading('btn-do-login', false, "Masuk Sekarang"); 
               } catch(er) {
                   console.error("Admin Login Error: ", er);
@@ -1115,16 +1108,8 @@
 
               if(foundProf) {
                   state.customerData = foundProf;
-                  state.user = { uid: foundUid, email: e, isAnonymous: false };
+                  state.user = { uid: foundUid, email: foundProf.email || e, isAnonymous: false };
                   this.setupCustomerUI(state.user);
-                  
-                  document.getElementById('auth-section').classList.add('hidden');
-                  document.getElementById('dashboard-section').classList.remove('hidden');
-                  document.getElementById('dash-email').textContent = foundProf.email;
-                  document.getElementById('cust-profile-name').textContent = foundProf.name;
-                  document.getElementById('btn-cust-login').classList.add('hidden');
-                  document.getElementById('cust-profile-badge').classList.remove('hidden');
-                  document.getElementById('cust-profile-badge').classList.add('flex');
                   
                   ui.showToast("Login Berhasil!"); 
                   this.fetchMyOrders();
@@ -1141,15 +1126,7 @@
           state.user = auth.currentUser;
           state.customerData = null;
           state.isAdmin = false;
-          document.getElementById('btn-cust-login').classList.remove('hidden');
-          document.getElementById('cust-profile-badge').classList.add('hidden');
-          document.getElementById('cust-profile-badge').classList.remove('flex');
-          document.getElementById('auth-section').classList.remove('hidden');
-          document.getElementById('dashboard-section').classList.add('hidden');
-          
-          document.getElementById('checkout-auth-warning').classList.remove('hidden');
-          document.getElementById('checkout-fields').classList.add('hidden');
-          
+          this.syncAuthUI();
           ui.showToast("Logged Out"); 
       },
 
