@@ -748,7 +748,7 @@
     const db = getFirestore(fbApp);
 
     // Enforcement of Rule 1: Strict Paths
-    const getCol = (colName) => collection(db, 'artifacts', appId, 'public', 'data', colName);
+    const getCol = (colName) => collection(db, colName);
     const getDocRef = (colName, docId) => doc(getCol(colName), docId);
 
     // Profile handling: In order to support email login properly in this restricted env, 
