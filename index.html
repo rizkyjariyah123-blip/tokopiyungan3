@@ -879,7 +879,9 @@
 
     const getCol = (name) => IS_PREVIEW ? collection(db, 'artifacts', appId, 'public', 'data', name) : collection(db, name);
     const getDocRef = (colName, docId) => doc(getCol(colName), docId);
-    const getProfileRef = (uid) => IS_PREVIEW ? doc(collection(db, 'artifacts', appId, 'users', uid, 'profile'), 'data') : doc(collection(db, 'users'), uid);
+    
+    // PERBAIKAN: Menggunakan koleksi terpusat 'profiles' agar bisa dicari saat Login dan cek Referral
+    const getProfileRef = (uid) => doc(getCol('profiles'), uid);
 
     // Global State
     const state = {
@@ -1378,7 +1380,8 @@
           try {
               let referredByUid = null;
               if (refCodeInput) {
-                  const profCol = collection(db, 'artifacts', appId, 'public', 'data', 'profiles');
+                  // PERBAIKAN: Menggunakan getCol agar otomatis menyesuaikan dengan Firebase Anda
+                  const profCol = getCol('profiles');
                   const profilesSnap = await getDocs(profCol);
                   let found = false;
                   profilesSnap.forEach(doc => {
@@ -1427,7 +1430,8 @@
           }
           
           try { 
-              const profCol = collection(db, 'artifacts', appId, 'public', 'data', 'profiles');
+              // PERBAIKAN: Menggunakan getCol
+              const profCol = getCol('profiles');
               const qSnap = await getDocs(profCol);
               let foundProf = null; let foundUid = null;
               qSnap.forEach(doc => {
@@ -1453,9 +1457,16 @@
       },
       
       async doLogout() { 
-          state.user = auth.currentUser;
           state.customerData = null;
           state.isAdmin = false;
+          
+          // PERBAIKAN: Memastikan perangkat mendapat sesi baru setelah logout agar uji coba banyak akun berjalan lancar
+          try { 
+              await signOut(auth); 
+              await signInAnonymously(auth); 
+          } catch(e) {}
+          
+          state.user = auth.currentUser;
           this.syncAuthUI();
           ui.showToast("Logged Out"); 
       },
