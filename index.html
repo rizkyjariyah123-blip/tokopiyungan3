@@ -185,27 +185,120 @@
       </div>
     </div>
 
-    <!-- Download Banner Premium -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
-      <div class="bg-gradient-to-r from-gray-900 via-emerald-900 to-emerald-700 rounded-3xl shadow-2xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between relative overflow-hidden border border-emerald-800">
-        <!-- Decorational elements -->
-        <div class="absolute -top-24 -right-24 w-64 h-64 bg-emerald-500 opacity-20 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-teal-400 opacity-20 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 pointer-events-none"></div>
+    <!-- FITUR TAMBAHAN (Layanan, Jelajahi, Banner & Support) -->
+    <div class="bg-white border-t border-gray-100 pt-10 pb-16 mt-8">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div class="flex items-center mb-8 md:mb-0 relative z-10 w-full md:w-auto text-center md:text-left flex-col md:flex-row">
-          <div class="w-20 h-20 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl flex items-center justify-center md:mr-6 mb-4 md:mb-0 shadow-[0_0_30px_rgba(16,185,129,0.4)] border border-emerald-300/30 transform -rotate-6 hover:rotate-0 transition-transform duration-300">
-            <i class="fa-brands fa-android text-white text-5xl drop-shadow-md"></i>
-          </div>
-          <div>
-            <h3 class="text-white font-black text-2xl md:text-3xl tracking-tight mb-2">Aplikasi Toko Online Piyungan</h3>
-            <p class="text-emerald-100 text-sm md:text-base font-medium max-w-md">Belanja lebih cepat, mudah, dan hemat. Dapatkan promo eksklusif hanya di aplikasi Android kami!</p>
-          </div>
+        <!-- Baris 1: Layanan Pelanggan, Jelajahi, Banner -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-16">
+            
+            <!-- Kolom 1: Layanan Pelanggan -->
+            <div class="col-span-1">
+                <h3 class="text-blue-900 font-bold text-base mb-4">Layanan Pelanggan</h3>
+                <ul class="space-y-2.5 text-xs sm:text-sm text-gray-600">
+                    <li><a href="#" onclick="app.navBottom('help')" class="hover:text-emerald-600 transition-colors">Pusat Bantuan</a></li>
+                    <li><a href="#" onclick="app.navBottom('help')" class="hover:text-emerald-600 transition-colors">Cara Pembelian</a></li>
+                    <li><a href="#" onclick="app.navBottom('help')" class="hover:text-emerald-600 transition-colors">Pengiriman</a></li>
+                    <li><a href="#" onclick="app.navBottom('help')" class="hover:text-emerald-600 transition-colors">Kebijakan Produk Internasional</a></li>
+                    <li><a href="#" onclick="app.navBottom('help')" class="hover:text-emerald-600 transition-colors">Cara Pengembalian</a></li>
+                    <li class="pt-2"><a href="#" onclick="app.navBottom('help')" class="bg-[#f97316] hover:bg-[#ea580c] text-white font-medium px-3 py-2 rounded transition-colors inline-block text-[11px] leading-tight">Ada pertanyaan? Hubungi kami di live chat (24 Jam)</a></li>
+                </ul>
+            </div>
+
+            <!-- Kolom 2: Jelajahi Toko -->
+            <div class="col-span-1">
+                <h3 class="text-blue-900 font-bold text-base mb-4">Jelajahi Toko</h3>
+                <ul class="space-y-2.5 text-xs sm:text-sm text-gray-600">
+                    <li><a href="#" class="hover:text-emerald-600 transition-colors">Tentang Lazada</a></li>
+                    <li><a href="#" class="hover:text-emerald-600 transition-colors">Affiliate Program</a></li>
+                    <li><a href="#" class="hover:text-emerald-600 transition-colors">Syarat & Ketentuan</a></li>
+                    <li><a href="#" class="hover:text-emerald-600 transition-colors">Kebijakan Privasi</a></li>
+                    <li><a href="#" class="hover:text-emerald-600 transition-colors">Jual Di TOP</a></li>
+                    <li><a href="#" class="hover:text-emerald-600 transition-colors">TOP Security</a></li>
+                </ul>
+            </div>
+
+            <!-- Kolom 3: Banner Download (Lebih panjang / span 2) -->
+            <div class="col-span-1 md:col-span-2 h-full flex items-start">
+                <div class="w-full bg-gradient-to-r from-emerald-900 to-emerald-600 rounded-3xl shadow-lg p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between relative overflow-hidden border border-emerald-800">
+                    <div class="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-white opacity-5 rounded-full blur-2xl pointer-events-none"></div>
+                    
+                    <div class="flex items-center mb-5 sm:mb-0 relative z-10 w-full sm:w-auto">
+                        <div class="w-16 h-16 bg-gradient-to-br from-emerald-300 to-teal-400 rounded-2xl flex items-center justify-center mr-4 shadow-[0_0_15px_rgba(16,185,129,0.5)] border border-emerald-200 shrink-0 transform -rotate-6">
+                            <i class="fa-brands fa-android text-white text-4xl drop-shadow-md"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-white font-black text-xl lg:text-2xl tracking-tight leading-tight">Aplikasi Toko Online<br>Piyungan</h3>
+                            <p class="text-emerald-100 text-[10px] sm:text-xs mt-1.5 max-w-[200px] leading-relaxed">Belanja lebih cepat, mudah, dan hemat. Dapatkan promo eksklusif hanya di aplikasi Android kami!</p>
+                        </div>
+                    </div>
+                    
+                    <a href="https://drive.google.com/file/d/1XImAnE8wS7vctAF66doOC6rbS-9KSi7Q/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto text-center bg-white text-emerald-800 hover:bg-emerald-50 font-black py-3 px-6 rounded-xl shadow-[0_5px_15px_rgba(0,0,0,0.2)] transition-transform transform hover:scale-105 relative z-10 flex items-center justify-center text-xs uppercase tracking-wide">
+                        <i class="fa-solid fa-download mr-2 text-lg"></i> Silahkan Download Aplikasi
+                    </a>
+                </div>
+            </div>
+
         </div>
-        
-        <a href="https://drive.google.com/file/d/1XImAnE8wS7vctAF66doOC6rbS-9KSi7Q/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="w-full md:w-auto text-center bg-white text-emerald-800 hover:bg-emerald-50 font-black py-4 px-8 rounded-xl shadow-[0_10px_25px_rgba(0,0,0,0.3)] transition-all transform hover:-translate-y-1 hover:scale-105 relative z-10 flex items-center justify-center uppercase tracking-wide text-sm border-b-4 border-emerald-200">
-          <i class="fa-solid fa-cloud-arrow-down mr-3 text-xl text-emerald-600"></i> Silahkan Download Aplikasi
-        </a>
+
+        <!-- Baris 2: Pembayaran, Supported By, Pengiriman -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10">
+            
+            <!-- Kolom 1: Metode Pembayaran -->
+            <div class="flex flex-col">
+                <h3 class="border border-emerald-700 text-emerald-700 font-black text-lg sm:text-xl text-center py-2 mb-6 uppercase tracking-wider bg-white shadow-sm">Metode Pembayaran</h3>
+                <div class="flex justify-center items-center gap-6 sm:gap-10 flex-1">
+                    <div class="flex flex-col items-center">
+                        <div class="w-20 h-20 bg-[#f0f9ff] rounded-full flex items-center justify-center border-4 border-white shadow-[0_4px_10px_rgba(0,0,0,0.1)] mb-2 hover:scale-105 transition-transform relative">
+                            <div class="absolute inset-1 border-2 border-dashed border-blue-200 rounded-full"></div>
+                            <i class="fa-solid fa-qrcode text-[40px] text-blue-500 relative z-10"></i>
+                        </div>
+                        <span class="text-[12px] font-black text-emerald-700 tracking-tight">Scan QRIS</span>
+                        <span class="text-[8px] text-emerald-600 text-center font-medium">Menggunakan e-wallet Anda</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="w-20 h-20 bg-[#fef2f2] rounded-2xl flex items-center justify-center border-4 border-white shadow-[0_4px_10px_rgba(0,0,0,0.1)] mb-2 hover:scale-105 transition-transform">
+                            <i class="fa-solid fa-hand-holding-dollar text-[40px] text-red-500"></i>
+                        </div>
+                        <div class="bg-red-600 text-white text-[9px] sm:text-[10px] font-black italic tracking-widest px-3 py-1 rounded shadow-sm border border-red-700 uppercase" style="transform: skewX(-10deg);">
+                            <span style="display:inline-block; transform: skewX(10deg);">CASH ON DELIVERY</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kolom 2: Supported By -->
+            <div class="flex flex-col">
+                <h3 class="border border-emerald-700 text-emerald-700 font-black text-lg sm:text-xl text-center py-2 mb-6 uppercase tracking-wider bg-white shadow-sm">Supported By</h3>
+                <div class="flex-1 flex flex-col justify-center items-center text-center font-black text-emerald-700 leading-loose text-[11px] sm:text-sm uppercase tracking-wide px-2">
+                    <p>Aisyah <span class="text-emerald-400 mx-1">|</span> Muhammadiyah <span class="text-emerald-400 mx-1">|</span> Kopi Kuden</p>
+                    <p>Pedukuhan Piyungan <span class="text-emerald-400 mx-1">|</span> Calon Gubernur</p>
+                    <p>Camat Piyungan</p>
+                </div>
+            </div>
+
+            <!-- Kolom 3: Metode Pengiriman -->
+            <div class="flex flex-col">
+                <h3 class="border border-emerald-700 text-emerald-700 font-black text-lg sm:text-xl text-center py-2 mb-6 uppercase tracking-wider bg-white shadow-sm">Metode Pengiriman</h3>
+                <div class="flex justify-center items-center gap-6 sm:gap-10 flex-1">
+                    <div class="flex flex-col items-center relative">
+                        <div class="w-20 h-20 bg-emerald-50 rounded-2xl flex items-center justify-center border-4 border-white shadow-[0_4px_10px_rgba(0,0,0,0.1)] mb-2 hover:scale-105 transition-transform relative">
+                            <i class="fa-solid fa-store text-[40px] text-emerald-500"></i>
+                            <i class="fa-solid fa-box absolute bottom-2 right-2 text-sm text-yellow-500 drop-shadow-md"></i>
+                        </div>
+                        <span class="text-[12px] font-black text-emerald-700 tracking-tight" style="-webkit-text-stroke: 0.5px white;">AMBIL DI TOKO</span>
+                    </div>
+                    <div class="flex flex-col items-center relative">
+                        <div class="w-20 h-20 bg-red-50 rounded-2xl flex items-center justify-center border-4 border-white shadow-[0_4px_10px_rgba(0,0,0,0.1)] mb-2 hover:scale-105 transition-transform relative">
+                            <i class="fa-solid fa-motorcycle text-[40px] text-red-500"></i>
+                            <i class="fa-solid fa-location-dot absolute -top-1.5 -right-1.5 text-2xl text-red-600 drop-shadow-md animate-bounce"></i>
+                        </div>
+                        <span class="text-[12px] font-black text-red-600 tracking-tight" style="-webkit-text-stroke: 0.5px white; text-shadow: 1px 1px 0px white;">DELIVERY</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
       </div>
     </div>
   </main>
