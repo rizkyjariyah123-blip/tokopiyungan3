@@ -880,7 +880,7 @@
     const getCol = (name) => IS_PREVIEW ? collection(db, 'artifacts', appId, 'public', 'data', name) : collection(db, name);
     const getDocRef = (colName, docId) => doc(getCol(colName), docId);
     
-    // PERBAIKAN: Menggunakan koleksi terpusat 'profiles' agar bisa dicari saat Login dan cek Referral
+    // PERBAIKAN: Memastikan semua akun disimpan di 1 folder publik 'profiles' agar bisa dicari saat cek Referral
     const getProfileRef = (uid) => doc(getCol('profiles'), uid);
 
     // Global State
@@ -1380,7 +1380,7 @@
           try {
               let referredByUid = null;
               if (refCodeInput) {
-                  // PERBAIKAN: Menggunakan getCol agar otomatis menyesuaikan dengan Firebase Anda
+                  // PERBAIKAN: Menggunakan getCol('profiles') secara dinamis
                   const profCol = getCol('profiles');
                   const profilesSnap = await getDocs(profCol);
                   let found = false;
@@ -1397,7 +1397,6 @@
               const myReferralCode = Math.random().toString(36).substring(2, 8).toUpperCase();
               const initialUnseen = { personal: 0, affiliate: 0 };
               
-              // Menggunakan ID/Sistem Bawaan Firebase untuk pendaftaran
               let currentUid = auth.currentUser ? auth.currentUser.uid : "anon-" + Date.now();
               
               const newProfile = { email: e, password: pw, name:n, phone:p, address:a, role:'customer', referralCode: myReferralCode, referredBy: referredByUid, points: 0, unseenPoints: initialUnseen };
@@ -1430,7 +1429,7 @@
           }
           
           try { 
-              // PERBAIKAN: Menggunakan getCol
+              // PERBAIKAN: Menggunakan getCol('profiles') secara dinamis
               const profCol = getCol('profiles');
               const qSnap = await getDocs(profCol);
               let foundProf = null; let foundUid = null;
