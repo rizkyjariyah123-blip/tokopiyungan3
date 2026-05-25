@@ -777,6 +777,18 @@
               <input type="number" id="add-price" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500">
             </div>
             <div>
+              <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Label Promo <span class="text-orange-500 font-normal">(Opsional)</span></label>
+              <select id="add-label" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                  <option value="">-- Tanpa Label --</option>
+                  <option value="Harga Promo">Harga Promo</option>
+                  <option value="Komisi Extra">Komisi Extra</option>
+                  <option value="Produk Terbatas">Produk Terbatas</option>
+                  <option value="SOLD OUT">SOLD OUT</option>
+                  <option value="DISKON EXTRA">DISKON EXTRA</option>
+                  <option value="PAKET HEMAT">PAKET HEMAT</option>
+              </select>
+            </div>
+            <div class="md:col-span-2">
               <label class="block text-xs font-bold text-gray-700 uppercase mb-1">URL Gambar Valid</label>
               <input type="text" id="add-image" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500">
             </div>
@@ -1648,7 +1660,18 @@
             const optionsHTML = p.variants.map((v, i) => `<option value="${i}" data-price="${v.price}" data-original-price="${v.originalPrice !== undefined ? v.originalPrice : (p.originalPrice || 0)}">${v.name}</option>`).join('');
             variantHTML = `<div class="mt-1 mb-2"><select id="var-${p.id}" onchange="app.changeVariantPrice('${p.id}')" class="variant-select w-full bg-gray-50 border border-gray-200 text-gray-700 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-emerald-500 font-medium"><option value="" disabled selected>Pilih Variasi</option>${optionsHTML}</select></div>`;
           }
-          return `<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all flex flex-col group relative"><div class="absolute top-2 left-2 z-10"><span class="bg-white/90 backdrop-blur-sm text-gray-800 text-[10px] font-black px-2 py-1 rounded shadow-sm">${p.category}</span></div>${badgeHTML}<img src="${p.img}" onclick="app.openProductDetail('${p.id}')" class="w-full h-48 object-cover bg-gray-100 group-hover:scale-105 transition-transform cursor-pointer" title="Klik untuk lihat detail"><div class="p-4 flex flex-col flex-grow"><h3 class="text-sm font-bold text-gray-900 leading-tight line-clamp-2 cursor-pointer hover:text-emerald-600" onclick="app.openProductDetail('${p.id}')">${p.name}</h3>${variantHTML}<div class="mt-auto flex justify-between items-center pt-3 border-t border-gray-50"><span id="price-${p.id}" class="font-black text-emerald-600">${ui.formatRupiah(p.price)}</span><button onclick="app.addToCart('${p.id}')" class="bg-gray-900 hover:bg-emerald-600 text-white w-9 h-9 rounded-xl shadow-md transition-all"><i class="fa-solid fa-plus"></i></button></div></div></div>`;
+          
+          let labelHTML = '';
+          if (p.label) {
+              labelHTML = `<div class="mb-1"><span class="inline-block border border-orange-500 text-red-600 font-black italic text-[9px] sm:text-[10px] px-1.5 py-0.5 uppercase tracking-tighter" style="text-shadow: 0.5px 0.5px 0px rgba(250,204,21,0.3);">${p.label}</span></div>`;
+          }
+          
+          let btnCart = `<button onclick="app.addToCart('${p.id}')" class="bg-gray-900 hover:bg-emerald-600 text-white w-8 h-8 sm:w-9 sm:h-9 rounded-xl shadow-md transition-all flex items-center justify-center shrink-0 mb-0.5"><i class="fa-solid fa-plus"></i></button>`;
+          if (p.label === 'SOLD OUT') {
+              btnCart = `<button disabled class="bg-gray-300 text-gray-500 w-8 h-8 sm:w-9 sm:h-9 rounded-xl shadow-none cursor-not-allowed flex items-center justify-center shrink-0 mb-0.5"><i class="fa-solid fa-times"></i></button>`;
+          }
+
+          return `<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all flex flex-col group relative"><div class="absolute top-2 left-2 z-10"><span class="bg-white/90 backdrop-blur-sm text-gray-800 text-[10px] font-black px-2 py-1 rounded shadow-sm">${p.category}</span></div>${badgeHTML}<img src="${p.img}" onclick="app.openProductDetail('${p.id}')" class="w-full h-48 object-cover bg-gray-100 group-hover:scale-105 transition-transform cursor-pointer" title="Klik untuk lihat detail"><div class="p-3 sm:p-4 flex flex-col flex-grow"><h3 class="text-sm font-bold text-gray-900 leading-tight line-clamp-2 cursor-pointer hover:text-emerald-600 mb-1" onclick="app.openProductDetail('${p.id}')">${p.name}</h3>${variantHTML}<div class="mt-auto pt-2 border-t border-gray-50 flex justify-between items-end"><div class="flex flex-col">${labelHTML}<span id="price-${p.id}" class="font-black text-emerald-600 text-sm sm:text-base">${ui.formatRupiah(p.price)}</span></div>${btnCart}</div></div></div>`;
         }).join('');
       },
 
@@ -2349,6 +2372,7 @@
           document.getElementById('add-category').value = p.category || ''; 
           document.getElementById('add-original-price').value = p.originalPrice || ''; 
           document.getElementById('add-price').value = p.price || ''; 
+          document.getElementById('add-label').value = p.label || ''; 
           document.getElementById('add-image').value = p.img || ''; 
           document.getElementById('add-desc').value = p.desc || '';
           
@@ -2364,13 +2388,14 @@
 
       cancelEdit() { 
           state.editingProductId = null; document.getElementById('form-product-title').textContent = "Tambah Produk"; document.getElementById('btn-add-product-text').textContent = "Simpan Produk"; document.getElementById('btn-cancel-edit').classList.add('hidden'); 
-          ['add-name','add-original-price','add-price','add-image','add-desc','add-variants', 'add-variants-original'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; }); 
+          ['add-name','add-original-price','add-price','add-image','add-desc','add-variants', 'add-variants-original', 'add-label'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; }); 
       },
 
       async submitNewProduct() {
         const n = document.getElementById('add-name').value, c = document.getElementById('add-category').value, op = document.getElementById('add-original-price').value, p = document.getElementById('add-price').value, i = document.getElementById('add-image').value, d = document.getElementById('add-desc').value;
         const vInputOrig = document.getElementById('add-variants-original').value;
         const vInput = document.getElementById('add-variants').value;
+        const l = document.getElementById('add-label').value;
         
         if(!n||!p||!op) return ui.showToast("Nama, Harga Asli Dasar, dan Jual Dasar Wajib!","error");
         ui.setBtnLoading('btn-add-product',true);
@@ -2395,7 +2420,7 @@
                 }); 
             }
 
-            const payload = { name:n, category:c, originalPrice:Number(op), price:Number(p), img:i, desc:d, variants, status:"Aktif", updatedAt: Date.now() };
+            const payload = { name:n, category:c, originalPrice:Number(op), price:Number(p), img:i, desc:d, variants, status:"Aktif", label:l, updatedAt: Date.now() };
             if (state.editingProductId) await setDoc(getDocRef('products', state.editingProductId), payload, {merge:true}); 
             else { payload.createdAt = Date.now(); await setDoc(getDocRef('products', "PRD-" + Date.now().toString().slice(-6)), payload); }
             
