@@ -80,6 +80,32 @@
     </div>
   </div>
 
+  <!-- PRODUCT DETAIL MODAL -->
+  <div id="product-detail-modal" class="fixed inset-0 bg-black bg-opacity-60 z-[100000] hidden flex justify-center items-center backdrop-blur-sm p-4">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden relative fade-in flex flex-col max-h-[90vh]">
+      <div class="px-5 py-4 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
+        <h2 class="text-lg font-bold text-gray-900">Detail Produk</h2>
+        <button onclick="app.closeProductDetail()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 hover:bg-red-100 hover:text-red-600 transition-colors"><i class="fa-solid fa-times"></i></button>
+      </div>
+      <div class="overflow-y-auto flex-1 hide-scrollbar">
+        <img id="detail-img" src="" class="w-full h-64 sm:h-72 object-cover bg-gray-100">
+        <div class="p-6">
+          <div class="mb-2 text-[10px] font-bold text-emerald-600 tracking-wider uppercase bg-emerald-50 px-2.5 py-1 rounded inline-block" id="detail-category">Kategori</div>
+          <h3 id="detail-title" class="text-2xl font-black text-gray-900 leading-tight mt-1 mb-2">Nama Produk</h3>
+          <p id="detail-price" class="text-2xl font-black text-emerald-600 mb-5 border-b border-gray-100 pb-5">Rp 0</p>
+          
+          <div>
+            <h4 class="text-sm font-bold text-gray-800 mb-2 flex items-center"><i class="fa-solid fa-list-check text-emerald-500 mr-2"></i>Deskripsi & Spesifikasi Singkat</h4>
+            <p id="detail-desc" class="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap"></p>
+          </div>
+        </div>
+      </div>
+      <div class="p-5 border-t border-gray-100 bg-gray-50">
+        <button onclick="app.closeProductDetail()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition-all">Tutup Detail</button>
+      </div>
+    </div>
+  </div>
+
   <!-- TOP NAVBAR CLEAN & MODERN -->
   <nav id="navbar-public" class="bg-white shadow-sm sticky top-0 z-40 transition-all duration-300 border-b border-gray-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
@@ -966,7 +992,7 @@
     import { getFirestore, collection, doc, setDoc, getDoc, getDocs, deleteDoc, onSnapshot, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     const USER_FIREBASE_CONFIG = {
-        apiKey: "AIzaSyDWFtj_Ud9c3XSZo2OWPyGwqskFJVV3pxs",
+       apiKey: "AIzaSyDWFtj_Ud9c3XSZo2OWPyGwqskFJVV3pxs",
   authDomain: "jaya-mulya-toko.firebaseapp.com",
   projectId: "jaya-mulya-toko",
   storageBucket: "jaya-mulya-toko.firebasestorage.app",
