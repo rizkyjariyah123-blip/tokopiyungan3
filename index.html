@@ -12,7 +12,7 @@
   <meta name="apple-mobile-web-app-title" content="Toko Piyungan">
   
   <!-- 1. GANTI URL DI BAWAH INI DENGAN URL LOGO ANDA (Untuk Icon Apple iOS) -->
-  <link rel="apple-touch-icon" href="MASUKKAN_URL_LOGO_ANDA_DISINI.png">
+  <link rel="apple-touch-icon" href="https://placehold.co/192x192/10b981/ffffff?text=Logo">
   
   <title>Toko Online Piyungan</title>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -81,30 +81,73 @@
   </div>
 
   <!-- PRODUCT DETAIL MODAL -->
-  <div id="product-detail-modal" class="fixed inset-0 bg-black bg-opacity-60 z-[100000] hidden flex justify-center items-center backdrop-blur-sm p-4">
-    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden relative fade-in flex flex-col max-h-[90vh]">
-      <div class="px-5 py-4 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
-        <h2 class="text-lg font-bold text-gray-900">Detail Produk</h2>
-        <button onclick="app.closeProductDetail()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 hover:bg-red-100 hover:text-red-600 transition-colors"><i class="fa-solid fa-times"></i></button>
-      </div>
-      <div class="overflow-y-auto flex-1 hide-scrollbar">
-        <div class="relative">
-            <img id="detail-img" src="" class="w-full h-64 sm:h-72 object-cover bg-gray-100 transition-all duration-300">
-            <div id="detail-gallery-thumbnails" class="absolute bottom-3 left-0 right-0 flex justify-center gap-2 px-4 z-10 hidden"></div>
+  <div id="product-detail-modal" class="fixed inset-0 bg-black/60 z-[100000] hidden flex flex-col justify-end sm:justify-center items-center backdrop-blur-sm sm:p-4">
+    <div class="bg-white sm:rounded-3xl shadow-2xl w-full max-w-md h-[95vh] sm:h-auto sm:max-h-[90vh] overflow-hidden relative fade-in flex flex-col rounded-t-3xl">
+      
+      <!-- Tombol Kembali Melayang -->
+      <button onclick="app.closeProductDetail()" class="absolute top-4 left-4 z-20 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md text-gray-600 hover:text-gray-900 transition-colors">
+        <i class="fa-solid fa-arrow-left"></i>
+      </button>
+      
+      <!-- Area Scrollable -->
+      <div class="overflow-y-auto flex-1 hide-scrollbar relative bg-white pb-4">
+        
+        <!-- Gambar Utama & Slider -->
+        <div class="relative w-full aspect-square bg-gray-100">
+            <img id="detail-img" src="" class="w-full h-full object-cover transition-all duration-300">
+            <!-- Indikator Titik (Dots) -->
+            <div id="detail-slider-dots" class="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 z-10"></div>
         </div>
-        <div class="p-6">
-          <div class="mb-2 text-[10px] font-bold text-emerald-600 tracking-wider uppercase bg-emerald-50 px-2.5 py-1 rounded inline-block" id="detail-category">Kategori</div>
-          <h3 id="detail-title" class="text-2xl font-black text-gray-900 leading-tight mt-1 mb-2">Nama Produk</h3>
-          <p id="detail-price" class="text-2xl font-black text-emerald-600 mb-5 border-b border-gray-100 pb-5">Rp 0</p>
+        
+        <!-- Baris Thumbnail Gambar -->
+        <div id="detail-gallery-thumbnails" class="flex justify-center gap-3 px-4 py-4 overflow-x-auto hide-scrollbar hidden"></div>
+        
+        <!-- Info Produk & Pemilihan Varian -->
+        <div class="px-6 mt-2">
+          <h3 id="detail-title" class="text-2xl font-black text-emerald-600 leading-tight mb-2">Nama Produk</h3>
+          <p id="detail-price" class="text-3xl font-black text-orange-500 mb-6 tracking-tight">Rp 0</p>
           
-          <div>
-            <h4 class="text-sm font-bold text-gray-800 mb-2 flex items-center"><i class="fa-solid fa-list-check text-emerald-500 mr-2"></i>Deskripsi & Spesifikasi Singkat</h4>
-            <p id="detail-desc" class="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap"></p>
+          <!-- Box Varian 1 (Rasa/Warna) -->
+          <div id="detail-attributes-container" class="mb-5 hidden">
+            <p class="text-[13px] font-bold text-gray-800 mb-2.5">Pilihan Rasa / Warna:</p>
+            <div id="detail-attributes-list" class="flex flex-wrap gap-2"></div>
+          </div>
+
+          <!-- Box Varian 2 (Ukuran/Berat) -->
+          <div id="detail-variants-container" class="mb-5 hidden">
+            <p class="text-[13px] font-bold text-gray-800 mb-2.5">Pilihan Ukuran:</p>
+            <div id="detail-variants-list" class="flex flex-wrap gap-2"></div>
+          </div>
+
+          <!-- Pemilih Jumlah (Qty) -->
+          <div class="mb-6">
+            <p class="text-[13px] font-bold text-gray-800 mb-2.5">Jumlah:</p>
+            <div class="flex items-center border border-gray-300 rounded-lg w-max overflow-hidden shadow-sm">
+              <button onclick="app.changeModalQty(-1)" class="w-11 h-10 bg-white hover:bg-gray-50 flex items-center justify-center text-gray-600 transition-colors font-bold text-lg">-</button>
+              <input type="number" id="detail-qty" value="1" readonly class="w-14 h-10 text-center text-sm font-bold border-x border-gray-300 outline-none bg-white">
+              <button onclick="app.changeModalQty(1)" class="w-11 h-10 bg-white hover:bg-gray-50 flex items-center justify-center text-gray-600 transition-colors font-bold text-lg">+</button>
+            </div>
+          </div>
+
+          <!-- Kotak Spesifikasi -->
+          <div class="bg-blue-50/40 border border-blue-200 rounded-xl p-4 mb-2">
+            <h4 class="text-[13px] font-black text-emerald-600 mb-2">Spesifikasi & Deskripsi:</h4>
+            <div class="flex gap-4">
+              <span class="text-sm font-bold text-gray-700 w-16">Bahan</span>
+              <p id="detail-desc" class="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap flex-1"></p>
+            </div>
           </div>
         </div>
       </div>
-      <div class="p-5 border-t border-gray-100 bg-gray-50">
-        <button onclick="app.closeProductDetail()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition-all">Tutup Detail</button>
+      
+      <!-- Tombol Aksi Menempel (Sticky Bottom) -->
+      <div class="p-4 border-t border-gray-100 bg-white flex gap-3 shadow-[0_-10px_20px_rgba(0,0,0,0.03)] z-20 shrink-0">
+        <button onclick="app.addToCartFromModal()" class="flex-[3] bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
+          <i class="fa-solid fa-cart-plus"></i> Tambahkan
+        </button>
+        <button onclick="app.closeProductDetail()" class="flex-[2] bg-orange-500 hover:bg-orange-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition-all">
+          Tutup
+        </button>
       </div>
     </div>
   </div>
@@ -271,7 +314,7 @@
             <div class="col-span-1">
                 <h3 class="text-blue-900 font-bold text-base mb-4">Jelajahi Toko</h3>
                 <ul class="space-y-2.5 text-xs sm:text-sm text-gray-600">
-                    <li><a href="#" class="hover:text-emerald-600 transition-colors">Tentang Lazada</a></li>
+                    <li><a href="#" class="hover:text-emerald-600 transition-colors">Tentang Kami</a></li>
                     <li><a href="#" class="hover:text-emerald-600 transition-colors">Affiliate Program</a></li>
                     <li><a href="#" class="hover:text-emerald-600 transition-colors">Syarat & Ketentuan</a></li>
                     <li><a href="#" class="hover:text-emerald-600 transition-colors">Kebijakan Privasi</a></li>
@@ -1067,8 +1110,8 @@
             "background_color": "#ffffff",
             "theme_color": "#10b981",
             "icons": [
-                { "src": "MASUKKAN_URL_LOGO_ANDA_DISINI_UKURAN_192.png", "sizes": "192x192", "type": "image/png" },
-                { "src": "MASUKKAN_URL_LOGO_ANDA_DISINI_UKURAN_512.png", "sizes": "512x512", "type": "image/png" }
+                { "src": "https://placehold.co/192x192/10b981/ffffff?text=Logo", "sizes": "192x192", "type": "image/png" },
+                { "src": "https://placehold.co/512x512/10b981/ffffff?text=Logo", "sizes": "512x512", "type": "image/png" }
             ]
         };
         const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
@@ -1124,6 +1167,7 @@
     const db = getFirestore(fbApp);
 
     // KARENA ANDA BERMIGRASI KE SHARED HOSTING, KITA GUNAKAN KOLEKSI ROOT JIKA BUKAN PREVIEW
+    // Fungsi ini juga kompatibel penuh dengan mode Preview Canvas Artifacts
     const getCol = (name) => IS_PREVIEW ? collection(db, 'artifacts', typeof __app_id !== 'undefined' ? __app_id : 'toko', 'public', 'data', name) : collection(db, name);
     const getDocRef = (colName, docId) => doc(getCol(colName), docId);
     const getProfileRef = (uid) => doc(getCol('profiles'), uid);
@@ -1136,7 +1180,8 @@
       customVoucherCode: '', customVoucherAmount: 0, appliedManualVoucherCode: '', appliedManualVoucherAmount: 0, customVoucherUsedBy: [],
       activePointsAnim: null, appliedPointsDiscount: 0, pointsToDeduct: 0, adminAvatar: '', currentView: 'home',
       expandedSections: { semua: false, promo: false, diskon: false, hemat: false },
-      partners: [], editingPartnerId: null, tempProductImages: []
+      partners: [], editingPartnerId: null, tempProductImages: [],
+      modalData: { product: null, selectedVariantIdx: -1, selectedAttributeIdx: -1, qty: 1, currentImageIdx: 0 }
     };
     window.state = state;
 
@@ -1461,26 +1506,139 @@
           const p = state.products.find(x => x.id === id);
           if(!p) return;
           
-          document.getElementById('detail-img').src = p.img;
+          state.modalData = {
+              product: p,
+              selectedVariantIdx: p.variants && p.variants.length > 0 ? 0 : -1,
+              selectedAttributeIdx: p.attributes && p.attributes.length > 0 ? 0 : -1,
+              qty: 1,
+              currentImageIdx: 0
+          };
           
-          const gallery = p.images && p.images.length > 0 ? p.images : [p.img];
-          const galleryContainer = document.getElementById('detail-gallery-thumbnails');
-          if (gallery.length > 1) {
-              galleryContainer.innerHTML = gallery.map(src => `<div onclick="document.getElementById('detail-img').src='${src}'" class="w-12 h-12 rounded-lg border-2 border-white shadow-md overflow-hidden cursor-pointer hover:border-emerald-500 transition-colors bg-white"><img src="${src}" class="w-full h-full object-cover"></div>`).join('');
-              galleryContainer.classList.remove('hidden');
-          } else {
-              galleryContainer.innerHTML = '';
-              galleryContainer.classList.add('hidden');
-          }
-
-          document.getElementById('detail-category').textContent = p.category;
-          document.getElementById('detail-title').textContent = p.name;
-          document.getElementById('detail-price').textContent = ui.formatRupiah(p.price);
-          document.getElementById('detail-desc').textContent = p.desc || "Tidak ada spesifikasi khusus.";
+          this.renderModal();
           document.getElementById('product-detail-modal').classList.remove('hidden');
       },
       closeProductDetail() { document.getElementById('product-detail-modal').classList.add('hidden'); },
+
+      renderModal() {
+          const m = state.modalData;
+          if(!m.product) return;
+          const p = m.product;
+
+          // Gambar & Slider Titik (Dots)
+          const gallery = p.images && p.images.length > 0 ? p.images : [p.img];
+          const currentImg = gallery[m.currentImageIdx];
+          document.getElementById('detail-img').src = currentImg;
+          
+          const dotsContainer = document.getElementById('detail-slider-dots');
+          if (gallery.length > 1) {
+              dotsContainer.innerHTML = gallery.map((_, i) => `<div class="w-2.5 h-2.5 rounded-full ${i === m.currentImageIdx ? 'bg-emerald-500' : 'bg-gray-300'} transition-colors"></div>`).join('');
+          } else {
+              dotsContainer.innerHTML = '';
+          }
+
+          // Thumbnail List
+          const thumbContainer = document.getElementById('detail-gallery-thumbnails');
+          if (gallery.length > 1) {
+              thumbContainer.innerHTML = gallery.map((src, i) => `
+                  <div onclick="app.setModalImage(${i})" class="w-[60px] h-[60px] rounded-lg border-[2.5px] ${i === m.currentImageIdx ? 'border-emerald-500' : 'border-transparent'} overflow-hidden cursor-pointer shrink-0 transition-all hover:border-emerald-300">
+                      <img src="${src}" class="w-full h-full object-cover">
+                  </div>
+              `).join('');
+              thumbContainer.classList.remove('hidden');
+          } else {
+              thumbContainer.innerHTML = '';
+              thumbContainer.classList.add('hidden');
+          }
+
+          // Text & Harga Utama
+          document.getElementById('detail-title').textContent = p.name;
+          let currentPrice = p.price;
+          if (m.selectedVariantIdx > -1 && p.variants[m.selectedVariantIdx]) {
+              currentPrice = p.variants[m.selectedVariantIdx].price;
+          }
+          document.getElementById('detail-price').textContent = ui.formatRupiah(currentPrice);
+          document.getElementById('detail-desc').textContent = p.desc || "-";
+
+          // Tombol Pilihan Rasa (Attributes)
+          const attrContainer = document.getElementById('detail-attributes-container');
+          const attrList = document.getElementById('detail-attributes-list');
+          if (p.attributes && p.attributes.length > 0) {
+              attrList.innerHTML = p.attributes.map((attr, i) => `
+                  <button onclick="app.setModalAttribute(${i})" class="px-3.5 py-2 border ${i === m.selectedAttributeIdx ? 'border-emerald-500 bg-emerald-500 text-white shadow-sm' : 'border-gray-300 bg-white text-gray-700 hover:border-emerald-300'} rounded-lg text-sm transition-all outline-none">
+                      ${attr}
+                  </button>
+              `).join('');
+              attrContainer.classList.remove('hidden');
+          } else {
+              attrContainer.classList.add('hidden');
+          }
+
+          // Tombol Pilihan Ukuran (Variants)
+          const varContainer = document.getElementById('detail-variants-container');
+          const varList = document.getElementById('detail-variants-list');
+          if (p.variants && p.variants.length > 0) {
+              varList.innerHTML = p.variants.map((v, i) => `
+                  <button onclick="app.setModalVariant(${i})" class="px-3.5 py-2 border ${i === m.selectedVariantIdx ? 'border-emerald-500 bg-emerald-500 text-white shadow-sm' : 'border-gray-300 bg-white text-gray-700 hover:border-emerald-300'} rounded-lg text-sm transition-all outline-none">
+                      ${v.name}
+                  </button>
+              `).join('');
+              varContainer.classList.remove('hidden');
+          } else {
+              varContainer.classList.add('hidden');
+          }
+
+          document.getElementById('detail-qty').value = m.qty;
+      },
       
+      setModalImage(idx) { state.modalData.currentImageIdx = idx; this.renderModal(); },
+      setModalAttribute(idx) { state.modalData.selectedAttributeIdx = idx; this.renderModal(); },
+      setModalVariant(idx) { state.modalData.selectedVariantIdx = idx; this.renderModal(); },
+      
+      changeModalQty(delta) {
+          let newQty = state.modalData.qty + delta;
+          if(newQty < 1) newQty = 1;
+          state.modalData.qty = newQty;
+          document.getElementById('detail-qty').value = newQty;
+      },
+
+      addToCartFromModal() {
+          const m = state.modalData;
+          if(!m.product) return;
+          const p = m.product;
+
+          let selectedVariantName = ""; 
+          let itemPrice = p.price; 
+          let itemOriginalPrice = p.originalPrice || 0;
+
+          if (p.variants && p.variants.length > 0) {
+              if(m.selectedVariantIdx === -1) return ui.showToast("Pilih variasi ukuran produk!", "error");
+              const v = p.variants[m.selectedVariantIdx];
+              selectedVariantName = v.name;
+              itemPrice = Number(v.price);
+              itemOriginalPrice = Number(v.originalPrice !== undefined ? v.originalPrice : p.originalPrice);
+          }
+
+          let selectedAttribute = "";
+          if (p.attributes && p.attributes.length > 0) {
+              if(m.selectedAttributeIdx === -1) return ui.showToast("Pilih variasi Rasa/Warna!", "error");
+              selectedAttribute = p.attributes[m.selectedAttributeIdx];
+          }
+
+          const cartItemId = `${p.id}|${selectedVariantName}|${selectedAttribute}`;
+          const existing = state.cart.find(i => i.cartItemId === cartItemId); 
+          
+          if(existing) {
+              existing.qty += m.qty; 
+          } else {
+              state.cart.push({ ...p, price: itemPrice, originalPrice: itemOriginalPrice, qty: m.qty, cartItemId, selectedVariant: selectedVariantName, selectedAttribute: selectedAttribute });
+          }
+          
+          ui.showToast("Berhasil dimasukkan ke keranjang!"); 
+          this.updateCartBadge(); 
+          if(state.isCartOpen) this.renderCart(); 
+          this.closeProductDetail();
+      },
+
       openPartnerDetail(id) {
           const p = state.partners.find(x => x.id === id);
           if(!p) return;
