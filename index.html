@@ -2034,10 +2034,22 @@
           if (section) section.classList.remove('hidden');
 
           container.innerHTML = state.partners.map(p => `
-              <div onclick="app.openPartnerDetail('${p.id}')" class="cursor-pointer bg-white border border-gray-100 rounded-2xl p-4 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow group">
-                  <img src="${p.img || 'https://placehold.co/100x100?text=No+Image'}" class="w-16 h-16 sm:w-20 sm:h-20 object-contain mb-3 group-hover:scale-110 transition-transform duration-300">
-                  <h4 class="text-xs sm:text-sm font-bold text-gray-800 leading-tight">${p.name}</h4>
-                  ${p.desc ? `<p class="text-[9px] sm:text-[10px] text-gray-500 mt-1 line-clamp-2">${p.desc}</p>` : ''}
+              <div onclick="app.openPartnerDetail('${p.id}')" class="cursor-pointer bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 group flex flex-col h-full shadow-sm">
+                  <div class="w-full aspect-square bg-gray-50 overflow-hidden relative border-b border-gray-100">
+                      <img src="${p.img || 'https://placehold.co/400x400?text=No+Image'}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                  </div>
+                  <div class="p-3 sm:p-4 flex flex-col flex-1 text-center justify-between bg-white">
+                      <div>
+                          <h4 class="text-sm sm:text-base font-black text-emerald-600 leading-tight mb-1 truncate">${p.name}</h4>
+                          <p class="text-[10px] sm:text-xs text-gray-500 line-clamp-2 leading-relaxed mb-3">${p.desc || 'Partner Resmi Terpercaya'}</p>
+                          <div class="flex justify-center text-yellow-400 text-[10px] sm:text-xs mb-4 space-x-1">
+                              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                          </div>
+                      </div>
+                      <div class="w-full bg-[#10b981] group-hover:bg-[#059669] text-white font-medium py-2 sm:py-2.5 rounded text-xs sm:text-sm transition-colors mt-auto flex items-center justify-center">
+                          Lihat Detail <i class="fa-solid fa-angles-right text-[10px] ml-1.5"></i>
+                      </div>
+                  </div>
               </div>
           `).join('');
       },
