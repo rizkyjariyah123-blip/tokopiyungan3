@@ -994,8 +994,14 @@
               <input type="text" id="add-partner-name" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500">
             </div>
             <div>
-              <label class="block text-xs font-bold text-gray-700 uppercase mb-1">URL Gambar / Logo</label>
-              <input type="text" id="add-partner-image" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500">
+              <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Gambar / Logo Partner</label>
+              <div class="flex gap-2">
+                  <input type="text" id="add-partner-image" placeholder="Paste URL ATAU klik Upload 👉" class="flex-1 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                  <label class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-xl shadow-md transition-colors cursor-pointer flex items-center shrink-0">
+                      <i class="fa-solid fa-upload sm:mr-2"></i> <span class="hidden sm:inline">Upload</span>
+                      <input type="file" id="upload-partner-image" accept="image/*" class="hidden" onchange="app.handlePartnerImageUpload(event)">
+                  </label>
+              </div>
             </div>
             <div>
               <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Link URL (Opsional)</label>
@@ -2998,6 +3004,37 @@
           document.getElementById('add-partner-image').value = ''; 
           document.getElementById('add-partner-link').value = ''; 
           document.getElementById('add-partner-desc').value = '';
+      },
+
+      handlePartnerImageUpload(e) {
+          const file = e.target.files[0];
+          if(!file) return;
+          
+          ui.setBtnLoading('btn-add-partner', true, "Memproses...");
+          
+          const reader = new FileReader();
+          reader.onload = (event) => {
+              const img = new Image();
+              img.onload = () => {
+                  const canvas = document.createElement('canvas');
+                  const MAX_SIZE = 600; // Optimal untuk logo partner
+                  let width = img.width; let height = img.height;
+                  
+                  if (width > height) { if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; } } 
+                  else { if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; } }
+                  
+                  canvas.width = width; canvas.height = height;
+                  const ctx = canvas.getContext('2d');
+                  ctx.drawImage(img, 0, 0, width, height);
+                  const b64 = canvas.toDataURL('image/jpeg', 0.8);
+                  
+                  document.getElementById('add-partner-image').value = b64;
+                  document.getElementById('upload-partner-image').value = ''; 
+                  ui.setBtnLoading('btn-add-partner', false, state.editingPartnerId ? "Simpan Perubahan" : "Simpan Partner");
+              };
+              img.src = event.target.result;
+          };
+          reader.readAsDataURL(file);
       },
 
       async submitNewPartner() {
