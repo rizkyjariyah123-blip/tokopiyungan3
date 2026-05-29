@@ -1168,7 +1168,7 @@
 
     // KARENA ANDA BERMIGRASI KE SHARED HOSTING, KITA GUNAKAN KOLEKSI ROOT JIKA BUKAN PREVIEW
     // Fungsi ini juga kompatibel penuh dengan mode Preview Canvas Artifacts
-    const getCol = (name) => IS_PREVIEW ? collection(db, 'artifacts', typeof __app_id !== 'undefined' ? __app_id : 'toko', 'public', 'data', name) : collection(db, name);
+    const getCol = (name) => IS_PREVIEW ? collection(db, 'artifacts', typeof __app_id !== 'undefined' ? __app_id : 'default-app-id', 'public', 'data', name) : collection(db, name);
     const getDocRef = (colName, docId) => doc(getCol(colName), docId);
     const getProfileRef = (uid) => doc(getCol('profiles'), uid);
 
@@ -1856,13 +1856,12 @@
 
       renderCategoryPills() { 
           const imageMap = {
-              'semua': 'https://placehold.co/100x100/10b981/ffffff?text=Semua',
-              'sayuran': 'https://lh3.googleusercontent.com/d/1HF-Y1XkKvefjpvIRZf3sZkgTGiVXYr30',
-              'sembako': 'https://placehold.co/100x100/10b981/ffffff?text=Sembako',
-              'kue': 'https://placehold.co/100x100/10b981/ffffff?text=Kue',
-              'snack': 'https://placehold.co/100x100/10b981/ffffff?text=Snack',
-              'minum': 'https://placehold.co/100x100/10b981/ffffff?text=Minum',
-              'daging': 'https://placehold.co/100x100/10b981/ffffff?text=Daging',
+              'semua': 'https://lh3.googleusercontent.com/d/1pT30Dg7zh0Iv3n-x2XptQNklwyaTKbHP',
+              'sembako': 'https://lh3.googleusercontent.com/d/1HF-Y1XkKvefjpvIRZf3sZkgTGiVXYr30',
+              'sabun': 'https://lh3.googleusercontent.com/d/1-x9Sxn20HvD2btzpxQoaBRlCgRQKZnrT',
+              'snack': 'https://lh3.googleusercontent.com/d/165_5XlEz0gEw9rJybaXMSBmalHYbPrSw',
+              'jajanan pasar': 'https://lh3.googleusercontent.com/d/1jLMOLZnajerNq3zzYOuo24-Fji4JwR64',
+              'produk digital': 'https://lh3.googleusercontent.com/d/1phxutdf9ZcjQ-0_6mlPIl0GwwFSQM80b',
               'buah': 'https://placehold.co/100x100/10b981/ffffff?text=Buah',
               'bumbu': 'https://placehold.co/100x100/10b981/ffffff?text=Bumbu'
           };
@@ -2981,51 +2980,112 @@
           state.editingPartnerId = null; 
           document.getElementById('form-partner-title').textContent = "Tambah Partner"; 
           document.getElementById('btn-add-partner-text').textContent = "Simpan Partner"; 
-          document.getElementById('btn-cancel-edit-partner').classList.add('hidden'); 
-          ['add-partner-name','add-partner-image','add-partner-link','add-partner-desc'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+          document.getElementById('btn-cancel-edit-partner').classList.add('hidden');
+          
+          document.getElementById('add-partner-name').value = ''; 
+          document.getElementById('add-partner-image').value = ''; 
+          document.getElementById('add-partner-link').value = ''; 
+          document.getElementById('add-partner-desc').value = '';
       },
 
       async submitNewPartner() {
-          const n = document.getElementById('add-partner-name').value, i = document.getElementById('add-partner-image').value, l = document.getElementById('add-partner-link').value, d = document.getElementById('add-partner-desc').value;
-          if(!n || !i) return ui.showToast("Nama dan Gambar/Logo Wajib diisi!", "error");
+          const n = document.getElementById('add-partner-name').value;
+          const img = document.getElementById('add-partner-image').value;
+          const link = document.getElementById('add-partner-link').value;
+          const desc = document.getElementById('add-partner-desc').value;
+
+          if(!n || !img) return ui.showToast("Nama dan URL Gambar wajib diisi!", "error");
           ui.setBtnLoading('btn-add-partner', true);
-          
+
           try {
-              const payload = { name: n, img: i, link: l, desc: d, updatedAt: Date.now() };
-              if (state.editingPartnerId) await setDoc(getDocRef('partners', state.editingPartnerId), payload, {merge:true});
-              else { payload.createdAt = Date.now(); await setDoc(getDocRef('partners', "PTR-" + Date.now().toString().slice(-6)), payload); }
-              ui.showToast("Partner Berhasil Disimpan!"); this.cancelEditPartner(); this.refreshAdminPartners();
-          } catch(e) { ui.showToast(`Gagal: ${e.message}`, "error"); } 
-          finally { ui.setBtnLoading('btn-add-partner', false, state.editingPartnerId ? 'Simpan Perubahan' : 'Simpan Partner'); }
+              const payload = { name: n, img, link, desc, updatedAt: Date.now() };
+              if (state.editingPartnerId) {
+                  await setDoc(getDocRef('partners', state.editingPartnerId), payload, { merge: true });
+              } else {
+                  payload.createdAt = Date.now();
+                  await setDoc(getDocRef('partners', "PTN-" + Date.now().toString().slice(-6)), payload);
+              }
+              ui.showToast("Partner disimpan!");
+              this.cancelEditPartner();
+              this.refreshAdminPartners();
+          } catch (e) {
+              ui.showToast(`Gagal: ${e.message}`, "error");
+          } finally {
+              ui.setBtnLoading('btn-add-partner', false, state.editingPartnerId ? 'Simpan Perubahan' : 'Simpan Partner');
+          }
       },
 
-      deletePartner(id) { ui.showConfirm("Hapus partner ini?", async () => { try { await deleteDoc(getDocRef('partners', id)); ui.showToast("Partner dihapus."); this.refreshAdminPartners(); } catch(e) { ui.showToast("Gagal menghapus", "error"); } }); },
+      deletePartner(id) {
+          ui.showConfirm("Hapus partner ini?", async () => {
+              try {
+                  await deleteDoc(getDocRef('partners', id));
+                  ui.showToast("Partner dihapus.");
+                  this.refreshAdminPartners();
+              } catch(e) { ui.showToast("Gagal hapus partner", "error"); }
+          });
+      },
 
-      renderAdminSliders() { document.getElementById('admin-slider-list').innerHTML = state.sliderImages.length ? state.sliderImages.map((u, i) => `<div class="relative rounded-lg border overflow-hidden group aspect-w-3 aspect-h-1"><img src="${u}" class="object-cover w-full h-24"><button onclick="app.removeSliderImage(${i})" class="absolute top-1 right-1 bg-red-600 text-white w-6 h-6 rounded"><i class="fa-solid fa-times text-xs"></i></button></div>`).join('') : '<p class="text-xs text-gray-500">Belum ada slide.</p>'; },
-      addSliderImage() { const v = document.getElementById('add-slider-url').value.trim(); if(v){ state.sliderImages.push(v); document.getElementById('add-slider-url').value=''; this.renderAdminSliders(); } },
-      removeSliderImage(i) { state.sliderImages.splice(i,1); this.renderAdminSliders(); },
+      renderAdminSliders() {
+          const list = document.getElementById('admin-slider-list');
+          if(!list) return;
+          list.innerHTML = state.sliderImages.map((url, i) => `
+              <div class="relative rounded-xl overflow-hidden border border-gray-200 group h-32">
+                  <img src="${url}" class="w-full h-full object-cover">
+                  <button onclick="app.removeSliderImage(${i})" class="absolute top-2 right-2 bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md"><i class="fa-solid fa-trash"></i></button>
+              </div>
+          `).join('');
+      },
+
+      addSliderImage() {
+          const url = document.getElementById('add-slider-url').value.trim();
+          if(!url) return;
+          state.sliderImages.push(url);
+          document.getElementById('add-slider-url').value = '';
+          this.renderAdminSliders();
+          this.initPublicSlider();
+      },
+
+      removeSliderImage(idx) {
+          state.sliderImages.splice(idx, 1);
+          this.renderAdminSliders();
+          this.initPublicSlider();
+      },
+
       async saveSettingsData(type) {
-        try {
-            const ref = getDocRef('settings', 'app_config'); let payload = {};
-            if(type === 'wa') payload.waNumber = document.getElementById('setting-wa').value;
-            if(type === 'category') payload.categories = document.getElementById('setting-categories').value.split(',').map(s=>s.trim()).filter(s=>s);
-            if(type === 'slider') payload.sliders = state.sliderImages;
-            if(type === 'qris') { payload.qrisString = document.getElementById('setting-qris').value.trim(); state.qrisString = payload.qrisString; }
-            if(type === 'voucher') { 
-                const newCode = document.getElementById('setting-voucher-code').value.trim().toUpperCase(); 
-                const newAmount = Number(document.getElementById('setting-voucher-amount').value) || 0; 
-                if (newCode !== state.customVoucherCode) { payload.customVoucherUsedBy = []; state.customVoucherUsedBy = []; }
-                payload.customVoucherCode = newCode; payload.customVoucherAmount = newAmount;
-                state.customVoucherCode = payload.customVoucherCode; state.customVoucherAmount = payload.customVoucherAmount;
-                document.getElementById('voucher-usage-badge').textContent = `Terpakai: ${state.customVoucherUsedBy.length}/5`;
-            }
-            await setDoc(ref, payload, { merge: true }); ui.showToast("Disimpan!");
-            if(type !== 'slider' && type !== 'qris' && type !== 'voucher') this.loadData();
-        } catch(e) { ui.showToast(`Gagal: ${e.message}`, "error"); }
+          try {
+              const ref = getDocRef('settings', 'app_config');
+              let payload = {};
+              if(type === 'wa') { payload.waNumber = document.getElementById('setting-wa').value.trim(); state.waNumber = payload.waNumber; }
+              if(type === 'category') { 
+                  const cats = document.getElementById('setting-categories').value.split(',').map(s=>s.trim()).filter(s=>s);
+                  payload.categories = cats; state.categories = ["Semua", ...cats]; 
+                  this.renderCategoryPills();
+              }
+              if(type === 'slider') payload.sliders = state.sliderImages;
+              if(type === 'qris') { payload.qrisString = document.getElementById('setting-qris').value.trim(); state.qrisString = payload.qrisString; }
+              if(type === 'voucher') { 
+                  const newCode = document.getElementById('setting-voucher-code').value.trim().toUpperCase(); 
+                  const newAmount = Number(document.getElementById('setting-voucher-amount').value) || 0; 
+                  if (newCode !== state.customVoucherCode) { payload.customVoucherUsedBy = []; state.customVoucherUsedBy = []; }
+                  payload.customVoucherCode = newCode; payload.customVoucherAmount = newAmount;
+                  state.customVoucherCode = payload.customVoucherCode; state.customVoucherAmount = payload.customVoucherAmount;
+                  document.getElementById('voucher-usage-badge').textContent = `Terpakai: ${state.customVoucherUsedBy.length}/5`;
+              }
+              await setDoc(ref, payload, { merge: true }); ui.showToast("Disimpan!");
+              if(type !== 'slider' && type !== 'qris' && type !== 'voucher') this.loadData();
+          } catch(e) { ui.showToast(`Gagal: ${e.message}`, "error"); }
       },
-      contactAdmin() { if(state.waNumber) { let p=state.waNumber.replace(/[^0-9]/g,''); window.open(`https://wa.me/${p.startsWith('0')?'62'+p.substring(1):p}`,'_blank'); } }
+
+      contactAdmin() { 
+          if(state.waNumber) { 
+              let p=state.waNumber.replace(/[^0-9]/g,''); 
+              window.open(`https://wa.me/${p.startsWith('0')?'62'+p.substring(1):p}?text=Halo Admin Toko Piyungan, saya butuh bantuan...`,'_blank'); 
+          } else { ui.showToast("Nomor WA belum diatur.", "error"); }
+      }
     };
-    window.app = app; document.addEventListener("DOMContentLoaded", () => app.init());
+
+    window.app = app;
+    document.addEventListener('DOMContentLoaded', () => app.init());
   </script>
 </body>
 </html>
